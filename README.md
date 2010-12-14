@@ -7,5 +7,4 @@
     - boost
     - log4cxx
 - FLANN
-    - Instructions available here
-    - 
+    - Instructions available in the Wiki
