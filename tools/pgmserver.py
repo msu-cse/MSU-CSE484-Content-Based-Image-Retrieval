@@ -62,8 +62,11 @@ if __name__ == '__main__':
             print "closing connection"
             clientsocket.close()
             continue
-        imgData = clientsocket.recv(int(size))
-        print "received %s bytes" % len(imgData)
+            
+        imgData = ''
+        while len(imgData) < size:
+            imgData += clientsocket.recv(size - len(imgData))
+            print "received %s bytes" % len(imgData)
         
         # -- Write to a temporary file
         filename = "tmp.pgm"
