@@ -22,6 +22,7 @@ def server():
 
 def client(server,port,data):
     s = socket()
+    print "connecting to %s:%s" % (server,port)
     s.connect((server, port))
     print "connected"
     dataLen = len(data)
@@ -42,6 +43,7 @@ if __name__ == '__main__':
     # Open the socket
     serversocket = socket(AF_INET,SOCK_STREAM)
     serversocket.bind(('0.0.0.0',SERVER_PORT))
+    serversocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     serversocket.listen(100)
     
 
@@ -68,9 +70,6 @@ if __name__ == '__main__':
         
         # -- Call sift
         os.system('sift < % | python process-sift > results.key' % filename)
-        
-        # -- Process the data, send it back down the pipe.
-        # XXX
         
         # -- Close the connection to complete the transaction
         print "sending response"
