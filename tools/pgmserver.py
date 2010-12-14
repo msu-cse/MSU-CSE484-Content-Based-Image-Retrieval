@@ -67,12 +67,12 @@ if __name__ == '__main__':
         f.close()
         
         # -- Call sift
-        # os.system('sift < %s > results.key' % filename)
+        os.system('sift < % | python process-sift > results.key' % filename)
         
         # -- Process the data, send it back down the pipe.
         # XXX
         
         # -- Close the connection to complete the transaction
         print "sending response"
-        clientsocket.send(file("tmp.pgm").read())
+        clientsocket.send(file("results.key").read())
         clientsocket.close()
