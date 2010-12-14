@@ -1,0 +1,21 @@
+
+# Archives
+*.tar
+*.tar.gz
+*.tar.bz2
+
+# Python
+*.pyc
+
+# C
+*.o
+
+# Misc
+cbir
+Debug
+Release
+features
+docs
+
+# Mac
+*.DS_Store
