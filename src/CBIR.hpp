@@ -14,7 +14,7 @@ namespace cbir {
 
 using namespace std;
 
-typedef map<string,int> ImageFeatureCount;
+typedef map<string, int> ImageFeatureCount;
 
 /**
  *
@@ -66,6 +66,7 @@ public:
 	 *
 	 */
 	static void loadTxt(dataset &data, fs::path file);
+	static void loadTxtFromStream(dataset& data, istream stream);
 
 	bool haveFeatures();
 	bool haveClusters();
@@ -74,8 +75,7 @@ public:
 	int loadFeatures(fs::path file);
 	int saveFeatures(fs::path file);
 
-
-	int buildClusters(int numClusters=150000,int numIterations=15);
+	int buildClusters(int numClusters = 150000, int numIterations = 15);
 	int saveClusters(fs::path file);
 	int loadClusters(fs::path file);
 
@@ -83,7 +83,10 @@ public:
 	int saveClusterIndex(fs::path file);
 	int loadClusterIndex(fs::path file);
 
-	int computeBagOfWords(fs::path featureFile, fs::path directory, fs::path imageList, fs::path featureList);
+	int computeBagOfWords(fs::path featureFile, fs::path directory,
+			fs::path imageList, fs::path featureList);
+
+	int startServer(fs::path clusterFile, int port);
 };
 
 }

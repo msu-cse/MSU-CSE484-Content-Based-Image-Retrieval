@@ -20,6 +20,7 @@ po::options_description args("General Arguments");
 po::options_description formats("File Formats");
 po::options_description clustering("Clustering");
 po::options_description bag("Bag of Words");
+po::options_description server("Server");
 po::options_description cmdline_options;
 
 void print_usage() {
@@ -78,7 +79,12 @@ void getParameters (int ac, char* av[]) {
 					"Feature size list")
 	;
 
-	cmdline_options.add(help).add(args).add(formats).add(clustering).add(bag);
+	server.add_options()
+			("server",
+					po::value<int>(),
+					"Run the server on the specified port")
+	;
+	cmdline_options.add(help).add(args).add(formats).add(clustering).add(bag).add(server);
 
 	po::store(po::parse_command_line(ac, av, cmdline_options),  params);
 //	po::store(po::parse_command_line(ac, av, args), params);

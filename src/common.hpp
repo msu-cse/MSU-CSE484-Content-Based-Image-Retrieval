@@ -26,6 +26,8 @@
 #include <boost/algorithm/string.hpp>	// String manip
 #include <boost/foreach.hpp>			// FOR_EACH macro
 #include <boost/algorithm/string/replace.hpp>
+#include <boost/array.hpp>
+#include <boost/asio.hpp>
 
 /**
  * Each feature is made up of 128 numbers, each number is less than
@@ -36,6 +38,9 @@ typedef float feat;
 
 namespace fs = boost::filesystem;
 namespace po = boost::program_options;
+namespace ip = boost::asio::ip;
+namespace asio = boost::asio;
+
 typedef flann::Matrix<feat> dataset;
 
 #include "parameters.hpp"

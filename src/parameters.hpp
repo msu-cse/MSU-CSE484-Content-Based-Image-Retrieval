@@ -23,6 +23,7 @@ namespace po = boost::program_options;
 #define NUM_CLUSTERS			params["num-clusters"].as<int>()
 #define NUM_ITER				params["num-iters"].as<int>()
 #define BAG_OF_WORDS_DIR		GET_PARAM("bag-of-words",string,"")
+#define SERVER_PORT				GET_PARAM("server",int,8081)
 
 #define BAG_OF_WORDS			PARAM_SET("bag-of-words")
 #define CONVERT_TO_HDF5			PARAM_SET("convert-to-hdf5")
@@ -36,6 +37,7 @@ namespace po = boost::program_options;
 #define LOAD_CLUSTER_INDEX		PARAM_SET("save-cluster-index")
 #define SAVE_CLUSTER_INDEX		PARAM_SET("load-cluster-index")
 #define SANITY_CHECK			PARAM_SET("sanity")
+#define RUN_SERVER				PARAM_SET("server")
 
 namespace cbir {
 

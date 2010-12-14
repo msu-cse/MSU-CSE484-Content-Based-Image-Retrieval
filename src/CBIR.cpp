@@ -180,15 +180,11 @@ int CBIR::saveClusters(fs::path file) {
 
 int CBIR::buildClusterIndex() {
 
-	if (not haveFeatures() and OK != loadFeatures(FEATURE_FILE))
-		return EXIT_FAILURE;
-
 	if (not haveClusters()) {
-		if( fs::exists(CLUSTER_FILE) ) {
-			if( OK != loadClusters(CLUSTER_FILE) )
+		if (fs::exists(CLUSTER_FILE)) {
+			if (OK != loadClusters(CLUSTER_FILE))
 				return EXIT_FAILURE;
-		}
-		else if (OK != buildClusters(NUM_CLUSTERS, NUM_ITER))
+		} else if (OK != buildClusters(NUM_CLUSTERS, NUM_ITER))
 			return EXIT_FAILURE;
 	}
 
@@ -203,8 +199,8 @@ int CBIR::buildClusterIndex() {
 		indexParams.build_weight = 0.01;
 		indexParams.memory_weight = 1;
 	}
-	clusterIndex = flann_build_index(clusters.data, clusters.rows, clusters.cols, &speedup,
-			&indexParams);
+	clusterIndex = flann_build_index(clusters.data, clusters.rows,
+			clusters.cols, &speedup, &indexParams);
 
 	if (clusterIndex == NULL) {
 		error("Could not build cluster index");
@@ -253,7 +249,7 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 
 	// -- Ensure the clustering and indexing operation have already been done
 	if (not haveClusters()) {
-		if( fs::exists(CLUSTER_FILE) )
+		if (fs::exists(CLUSTER_FILE))
 			loadClusters(CLUSTER_FILE);
 		else {
 			debug("Cluster file " << CLUSTER_FILE << " does not exist. Building clusters.")
@@ -261,8 +257,10 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 		}
 	}
 	if (not haveClusterIndex()) {
-		if (fs::exists(INDEX_FILE)) loadClusterIndex(INDEX_FILE);
-		else buildClusterIndex();
+		if (fs::exists(INDEX_FILE))
+			loadClusterIndex(INDEX_FILE);
+		else
+			buildClusterIndex();
 	}
 
 	// -- Compute nearest neighbors
@@ -302,8 +300,8 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 	// -- Iterate over each
 	int totalFeatures = 0;
 	ImageFeatureCount::iterator iter;
-	for (iter = imageFeatureCount.begin(); iter != imageFeatureCount.end() && totalFeatures
-			< features.rows; iter++) {
+	for (iter = imageFeatureCount.begin(); iter != imageFeatureCount.end()
+			&& totalFeatures < features.rows; iter++) {
 
 		// Open the document, delete existing contents
 		fs::path documentPath = directory / iter->first;
@@ -326,26 +324,112 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 		 * </DOC>
 		 */
 
-		doc << "<DOC>" << endl
-			<< "<DOCNO>" << iter->first << "</DOCNO>" << endl
-			<< "<TEXT>" << endl;
+		doc << "<DOC>" << endl << "<DOCNO>" << iter->first << "</DOCNO>"
+				<< endl << "<TEXT>" << endl;
 
 		// Iterate over all of the features for this doc
 		for (int docFeature = 0; docFeature < iter->second && totalFeatures
 				< features.rows; docFeature++, totalFeatures++) {
-//			debug("Feature number " << totalFeatures << "(" << docFeature << "/" << iter->second << ") for " << iter->first);
+			//			debug("Feature number " << totalFeatures << "(" << docFeature << "/" << iter->second << ") for " << iter->first);
 			doc << indices[totalFeatures] << " ";
 		}
 
-		doc << "</TEXT>" << endl
-			<< "</DOC>" << endl;
+		doc << "</TEXT>" << endl << "</DOC>" << endl;
 
 		doc.close();
 	}
 
-
-
 	info("Wrote " << totalFeatures << " 'words'");
+}
+
+
+#define check_error(error) \
+	if (error == boost::asio::error::eof) { \
+		info("Connection closed"); \
+		continue; \
+	} \
+	else if (error) \
+		throw boost::system::system_error(error);
+
+int CBIR::startServer(fs::path clusterFile, int port) {
+
+	ENSURE_EXISTS(clusterFile, "Cluster file");
+	ENSURE_HDF5(clusterFile, "Cluster file");
+
+	info("Starting server");
+
+	loadClusters(clusterFile);
+	buildClusterIndex();
+
+	// I Love Boost.
+	// Makes things so much easier.
+	asio::io_service io_service;
+	ip::tcp::acceptor acceptor(io_service, ip::tcp::endpoint(ip::tcp::v4(), port));
+	boost::system::error_code error;
+	char *buffer = new char[1024 * 1024 * 10]; // 10MB buffer
+	int read;
+	for (;;) {
+		// -- Accept the connection
+		info("Waiting for a connection...")
+		ip::tcp::socket socket(io_service);
+		acceptor.accept(socket);
+		info("Accepted a connection from " << socket.remote_endpoint().address().to_string());
+
+		// -- Read the first 4 bytes for size
+		read = socket.read_some(asio::buffer(buffer, 4), error);
+		check_error(error);
+		info("Read " << read << " bytes");
+
+		// -- Calculate the size, read the file
+		long size = ntohl(*(long*)buffer);
+		info("Waiting on " << size << " bytes")
+		read = socket.read_some(asio::buffer(buffer, size), error);
+		info("Read " << read << " bytes");
+		check_error(error);
+		if(read != size) {
+			error("Did not get expected byte-count");
+			continue;
+		}
+
+		// TODO: We are writing out to a file, then reading it back in.
+		// Technically, we could parse this information from the buffer...
+		// ... but that's hard.
+
+		// -- Write out the file
+		fs::path tempFile( "server.tmp" );
+		info("Writing data to " << tempFile);
+		ofstream fout(tempFile.string().c_str(), ios::trunc);
+		fout.write(buffer, size);
+		fout.flush();
+		fout.close();
+
+		// -- Read back *in* the file
+		loadFeatures(tempFile);
+
+		// -- Nearest neighbor
+		// TODO: THis is a copy-paste, refactor code
+		int *indices = new int[features.rows];
+		float *distances = new float[features.rows];
+		FLANNParameters flannParams;
+		{
+			flannParams.log_level = LOG_NONE;
+			//		flannParams.log_destination=NULL;
+			flannParams.random_seed = CENTERS_RANDOM;
+		}
+		info("Computing nearest neighbors");
+		flann_find_nearest_neighbors_index(clusterIndex, features.data,
+				features.rows, indices, distances, 1, &flannParams);
+
+		// -- Load the data into a single string
+		stringstream ss;
+		for(int i = 0; i < features.rows; i++)
+			ss << indices[i] << " ";
+
+		// -- Send the data back over the wire
+		info("Got features: " << ss.str());
+
+		socket.close();
+	}
 }
 
 }

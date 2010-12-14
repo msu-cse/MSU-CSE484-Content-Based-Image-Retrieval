@@ -20,9 +20,9 @@ def server():
     pass
     
 
-def client(data):
+def client(server,port,data):
     s = socket()
-    s.connect((SERVER_HOST, SERVER_PORT))
+    s.connect((server, port))
     print "connected"
     dataLen = len(data)
     dataLenBytes = packSize(dataLen)

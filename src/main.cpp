@@ -19,6 +19,7 @@ int main(int ac, char* av[]) {
 
 	// -- Configure Logging
 	log4cxx::PropertyConfigurator::configure("log4cxx.properties");
+	info("Started CBIR");
 
 	// -- Load parameters, help
 	getParameters(ac, av);
@@ -29,13 +30,13 @@ int main(int ac, char* av[]) {
 
 	CBIR c;
 
-	if (OK != c.loadFeatures(FEATURE_FILE))
+	if (!RUN_SERVER && OK != c.loadFeatures(FEATURE_FILE))
 		return EXIT_FAILURE;
 
-	if(SANITY_CHECK) {
-		float firstRow [CBIR::NUM_COLUMNS] = FIRST_ROW_OF_DATA;
-		for(int i = 0; i < CBIR::NUM_COLUMNS; i++) {
-			if( firstRow[i] != c.features.data[i] ) {
+	if (SANITY_CHECK) {
+		float firstRow[CBIR::NUM_COLUMNS] = FIRST_ROW_OF_DATA;
+		for (int i = 0; i < CBIR::NUM_COLUMNS; i++) {
+			if (firstRow[i] != c.features.data[i]) {
 				error("Row 1 at " << i << " does not match!");
 				return EXIT_FAILURE;
 			}
@@ -47,7 +48,8 @@ int main(int ac, char* av[]) {
 			return EXIT_FAILURE;
 
 	if (BUILD_CLUSTERS)
-		if (OK != c.buildClusters() or OK != c.saveClusters(CLUSTER_FILE))
+		if (OK != c.buildClusters(NUM_CLUSTERS, NUM_ITER) or OK
+				!= c.saveClusters(CLUSTER_FILE))
 			return EXIT_FAILURE;
 
 	if (BUILD_CLUSTER_INDEX)
@@ -62,6 +64,10 @@ int main(int ac, char* av[]) {
 		if (OK != c.computeBagOfWords(FEATURE_FILE, BAG_OF_WORDS_DIR,
 				IMAGE_LIST_FILE, FEATURE_COUNT_FILE))
 			return EXIT_FAILURE;
+
+	if (RUN_SERVER) {
+		c.startServer(CLUSTER_FILE, SERVER_PORT);
+	}
 
 	//	// -- Load features
 	//	if( fs::exists(FEATURE_FILE) ) {
