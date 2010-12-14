@@ -27,7 +27,7 @@ def client(server,port,data):
     print "connected"
     dataLen = len(data)
     dataLenBytes = packSize(dataLen)
-    print "sending data"
+    print "sending %s bytes of data" % dataLen
     s.send(dataLenBytes)
     s.send(data)
     print "waiting on response"
@@ -42,8 +42,8 @@ if __name__ == '__main__':
 
     # Open the socket
     serversocket = socket(AF_INET,SOCK_STREAM)
-    serversocket.bind(('0.0.0.0',SERVER_PORT))
     serversocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    serversocket.bind(('0.0.0.0',SERVER_PORT))
     serversocket.listen(100)
     
 
@@ -58,8 +58,12 @@ if __name__ == '__main__':
         sizeBytes = clientsocket.recv(packedSize)
         size = unpackSize(sizeBytes)
         print "waiting on %s bytes" % (size)
+        if size <= 0:
+            print "closing connection"
+            clientsocket.close()
+            continue
         imgData = clientsocket.recv(int(size))
-
+        print "received %s bytes" % len(imgData)
         
         # -- Write to a temporary file
         filename = "tmp.pgm"
