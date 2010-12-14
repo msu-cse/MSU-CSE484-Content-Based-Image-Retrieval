@@ -14,7 +14,6 @@ import fileinput
 
 # -- Skip the first line explaining the dimensions
 # Also, skip the floating-point stuffs
-f = file(sys.argv[1])
 lines = []
 i = 0
 for line in fileinput.input():
