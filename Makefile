@@ -1,6 +1,6 @@
 # Compiler flags
 CC=g++
-CFLAGS= -I inc
+CFLAGS= -I.
 # Class name
 CLASS=cse484
 
@@ -26,10 +26,10 @@ all: $(OBJ) cbir
 	
 
 cbir: $(OBJ)
-	$(CC) $(SRC)/*.o $(FLAGS) -o $(OUTPUT_FILE) -lboost_program_options
+	$(CC) $(SRC)/*.o $(FLAGS) -o $(OUTPUT_FILE) -lboost_program_options -lhdf5 -lboost_filesystem -lboost_system -llog4cxx -lflann
 
 clean:
-	rm -f *.o $(OUTPUT_FILE) $(CLASS)-$(PROJ)-$(aPID)*.tar.gz
+	rm -f $(SRC)/*.o $(OUTPUT_FILE) $(CLASS)-$(PROJ)-$(aPID)*.tar.gz
 	
 dist: clean
 	tar -cvzf $(CLASS)-$(PROJECT)-$(aPID).tar.gz *
@@ -38,6 +38,6 @@ dist-final: clean
 	astyle --style=kr *.cpp *.h
 	rm -f *.orig
 	tar -cvzf $(CLASS)-$(PROJ)-$(aPID).final.tar.gz *
-	
-#.o:
-#	$(CC) $(FLAGS) -o $@ -c $<
+
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c -o $*.o $*.cpp
