@@ -1,3 +1,6 @@
 [submodule "flann"]
 	path = flann
 	url = git://github.com/zachriggle/FLANN.git
+[submodule "wiki"]
+	path = wiki
+	url = git://github.com/zachriggle/MSU-CSE484-Content-Based-Image-Retrieval.wiki.git

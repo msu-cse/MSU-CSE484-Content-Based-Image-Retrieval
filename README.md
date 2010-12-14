@@ -29,7 +29,7 @@ Homebrew allows easy installation of packages from source onto Mac OS X.  Any pa
 
 ### FLANN
 
-See the instructions in the wiki.  Note that a complete, tested-with-CBIR version of FLANN is included in the FLANN directory.
+See the instructions in the [wiki](./wiki/).  Note that a complete, tested-with-CBIR version of FLANN is included in the FLANN directory.
 
 ## Building CBIR
 
