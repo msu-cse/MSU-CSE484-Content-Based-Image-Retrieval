@@ -33,7 +33,7 @@ def client(server,port,data):
     print "waiting on response"
     
     responseSizePacked = s.recv(packedSize)
-    responseSize = unpack(responseSizePacked)
+    responseSize = unpackSize(responseSizePacked)
     response = ''
     while len(response) < responseSize:
         response += s.recv(responseSize - len(response))
@@ -88,5 +88,5 @@ if __name__ == '__main__':
         print "sending response"
         fileData = file("results.key").read()
         clientsocket.send(packSize(len(fileData)))
-        clientsocket.send(filedata)
+        clientsocket.send(fileData)
         clientsocket.close()
