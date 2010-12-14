@@ -31,9 +31,10 @@ def client(server,port,data):
     s.send(data)
     print "waiting on response"
     response = s.recv(999999)
-    print response
-    
+    print "Got:" + response
     s.close()
+    
+    return response
 
 
 if __name__ == '__main__':

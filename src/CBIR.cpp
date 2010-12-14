@@ -422,11 +422,14 @@ int CBIR::startServer(fs::path clusterFile, int port) {
 
 		// -- Load the data into a single string
 		stringstream ss;
+		ss << "<DOC 1>" << endl;
 		for(int i = 0; i < features.rows; i++)
-			ss << indices[i] << " ";
+			ss << indices[i] << endl;
+		ss << "</DOC>" << endl;
 
 		// -- Send the data back over the wire
-		info("Got features: " << ss.str());
+		info("Got words: " << ss.str());
+		asio::write(socket, asio::buffer(ss.str()), asio::transfer_all(), error);
 
 		socket.close();
 	}

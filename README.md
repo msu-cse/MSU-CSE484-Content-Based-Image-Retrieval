@@ -106,3 +106,28 @@ Note that we're skipping the `parse_query.params` and `ParseToText` steps and di
 
 Open up the newly-created `result.txt` and view your results.
 
+# Running the Bag-of-Words Server
+
+Once the clusters are built from the dataset, you can use the server to parse any set of features.
+
+    ./cbir ./cbir --server=8080 -c features/esp.feature.hdf5.clusters.hdf5
+    
+This will start the server listening on Port 8080.  It will listen for 4 bytes to provide the size of the feature data (in network-byte-order) and then read that many bytes.  That information will then be parsed as a 'feature' file in text mode. 
+
+After parsing, the nearest_neighbors operation will be executed, and the server will return data that can be directly interpreted by Lemur as a query:
+
+***Example***
+
+    <DOC 1>
+    1
+    1231
+    4342
+    </DOC>
+
+The easiest way to interact with the server is the Python script `tools/pgmserver.py`.
+
+    python
+    from pgmserver import *
+    oneSingleFeature="0 0 0 13 125 14 0 0 23 19 3 17 98 9 1 18 86 29 2 0 0 0 2 74 125 16 0 0 0 0 1 61 0 0 0 5 125 22 0 0 39 22 2 5 119 43 14 12 125 35 0 0 0 1 7 80 125 7 0 0 0 0 3 86 0 0 0 5 104 49 4 0 10 2 0 0 41 114 97 17 125 45 0 0 0 10 45 62 125 66 0 0 0 0 2 41 0 0 0 0 12 31 11 2 0 0 0 0 4 36 95 9 10 6 0 0 0 14 83 65 40 6 0 0 0 0 9 101"
+    query = client('localhost',8080,oneSingleFeature)
+    print query
