@@ -1,8 +1,5 @@
 import sys
-
-if len(sys.argv) < 2: 
-    print "Must provide a keyfile argument"
-    sys.exit(0)
+import fileinput
 
 # == Exampple Keydata
 # 176 128
@@ -18,6 +15,10 @@ if len(sys.argv) < 2:
 # -- Skip the first line explaining the dimensions
 # Also, skip the floating-point stuffs
 f = file(sys.argv[1])
-lines = f.readlines()
+lines = []
+i = 0
+for line in fileinput.input():
+    lines += [line]
+    
 for i in xrange(2,len(lines),8):
     print ' '.join([line.strip() for line in lines[i:i+7]])
