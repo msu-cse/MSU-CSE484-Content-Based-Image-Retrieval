@@ -183,8 +183,14 @@ int CBIR::buildClusterIndex() {
 	if (not haveFeatures() and OK != loadFeatures(FEATURE_FILE))
 		return EXIT_FAILURE;
 
-	if (not haveClusters() and OK != buildClusters(NUM_CLUSTERS, NUM_ITER))
-		return EXIT_FAILURE;
+	if (not haveClusters()) {
+		if( fs::exists(CLUSTER_FILE) ) {
+			if( OK != loadClusters(CLUSTER_FILE) )
+				return EXIT_FAILURE;
+		}
+		else if (OK != buildClusters(NUM_CLUSTERS, NUM_ITER))
+			return EXIT_FAILURE;
+	}
 
 	info("Indexing clusters (" << clusters.rows << " rows)");
 	FLANNParameters indexParams;
@@ -247,8 +253,12 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 
 	// -- Ensure the clustering and indexing operation have already been done
 	if (not haveClusters()) {
-		if( fs::exists(CLUSTER_FILE) ) loadClusters(CLUSTER_FILE);
-		else buildClusters(NUM_CLUSTERS, NUM_ITER);
+		if( fs::exists(CLUSTER_FILE) )
+			loadClusters(CLUSTER_FILE);
+		else {
+			debug("Cluster file " << CLUSTER_FILE << " does not exist. Building clusters.")
+			buildClusters(NUM_CLUSTERS, NUM_ITER);
+		}
 	}
 	if (not haveClusterIndex()) {
 		if (fs::exists(INDEX_FILE)) loadClusterIndex(INDEX_FILE);
@@ -306,12 +316,29 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 			return EXIT_FAILURE;
 		}
 
+		/*
+		 * Lemur Format:
+		 * <DOC>
+		 * <DOCNO>imgB</DOCNO>
+		 * <TEXT>
+		 * w3 w3 w1
+		 * </TEXT>
+		 * </DOC>
+		 */
+
+		doc << "<DOC>" << endl
+			<< "<DOCNO>" << iter->first << "</DOCNO>" << endl
+			<< "<TEXT>" << endl;
+
 		// Iterate over all of the features for this doc
 		for (int docFeature = 0; docFeature < iter->second && totalFeatures
 				< features.rows; docFeature++, totalFeatures++) {
 //			debug("Feature number " << totalFeatures << "(" << docFeature << "/" << iter->second << ") for " << iter->first);
-			doc << indices[totalFeatures] << endl;
+			doc << indices[totalFeatures] << " ";
 		}
+
+		doc << "</TEXT>" << endl
+			<< "</DOC>" << endl;
 
 		doc.close();
 	}

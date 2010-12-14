@@ -17,9 +17,9 @@ namespace po = boost::program_options;
 #define PARAM_SET(name)	(params.count(name) ? true : false)
 
 #define FEATURE_FILE			GET_PARAM("feature",string,"")
-#define CLUSTER_FILE			GET_PARAM("cluster",string,"")
-#define INDEX_FILE				GET_PARAM("index",string,"")
-#define HDF5_FILE				GET_PARAM("hdf5",string,"") // params["hdf5"].as<string>()
+#define CLUSTER_FILE			GET_PARAM("cluster",string, FEATURE_FILE + ".clusters.hdf5")
+#define INDEX_FILE				GET_PARAM("index",string, FEATURE_FILE + ".clusters.index.hdf5")
+//#define HDF5_FILE				GET_PARAM("hdf5",string,"") // params["hdf5"].as<string>()
 #define NUM_CLUSTERS			params["num-clusters"].as<int>()
 #define NUM_ITER				params["num-iters"].as<int>()
 #define BAG_OF_WORDS_DIR		GET_PARAM("bag-of-words",string,"")
@@ -35,6 +35,7 @@ namespace po = boost::program_options;
 #define BUILD_CLUSTER_INDEX		PARAM_SET("build-cluster-index")
 #define LOAD_CLUSTER_INDEX		PARAM_SET("save-cluster-index")
 #define SAVE_CLUSTER_INDEX		PARAM_SET("load-cluster-index")
+#define SANITY_CHECK			PARAM_SET("sanity")
 
 namespace cbir {
 

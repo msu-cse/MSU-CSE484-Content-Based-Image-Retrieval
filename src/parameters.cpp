@@ -29,17 +29,18 @@ void print_usage() {
 void getParameters (int ac, char* av[]) {
 	help.add_options()
 			("help,h", "Show this message")
+			("sanity", "Sanity check the input data")
 	;
 	args.add_options()
 			// -- Parameters
 			("feature,f",
-					po::value<string>()->default_value("esp.feature.hdf5"),
+					po::value<string>(), //->default_value("esp.feature.hdf5"),
 					"Feature file (Text, HDF5)")
 			("index,i",
-					po::value<string>()->default_value("esp.feature.index.hdf5"),
+					po::value<string>(), //->default_value("esp.feature.index.hdf5"),
 					"Index file (HDF5)")
 			("cluster,c",
-					po::value<string>()->default_value("esp.feature.clusters.hdf5"),
+					po::value<string>(), //->default_value("esp.feature.clusters.hdf5"),
 					"Cluster file (HDF5)")
 	;
 	formats.add_options()
@@ -70,10 +71,10 @@ void getParameters (int ac, char* av[]) {
 					"Build bag-of-words representation from <features> with "
 					"clusters optionally from <clusters>, store resulting text files in <dir>")
 			("img-list,m",
-					po::value<string>()->default_value("imglist.txt"),
+					po::value<string>()->default_value("features/imglist.txt"),
 					"Image list")
 			("size-list,s",
-					po::value<string>()->default_value("esp.size"),
+					po::value<string>()->default_value("features/esp.size"),
 					"Feature size list")
 	;
 

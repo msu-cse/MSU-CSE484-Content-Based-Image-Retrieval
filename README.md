@@ -57,9 +57,52 @@ This command will build the clusters, save them to a file (HDF5 format), index t
 
     $ mkdir docs
     $ ./cbir --feature=features/esp.feature.hdf5 \
-        --build-clusters -c features/esp.feature.clusters.hdf5 \
-        --build-cluster-index -i features/esp.feature.clusters.index.hdf5 \
-        --bag-of-words=docs \
-        --img-list=features/imglist.txt \
-        --size-list=features/esp.size 
+        --build-clusters \
+        --bag-of-words=docs
+
+>> ( Expected runtime: 20 minutes total )
+
+## Integrating with Lemur
+
+If you've already built Lemur (see the wiki for instructions) you should be ready to build the index and query!
+
+### Building the Index
+
+Launch Lemur:
+
+    java -cp share/lemur/lemur.jar -Djava.library.path=lib -jar share/lemur/LemurIndex.jar &
+
+- Set the Index Type to **KeyfileIncIndex**
+- Set the index name to a memorable path, for example `/path/to/cbir/doc-index`
+- Add add the directory containing our "documents" (bag-of-words files) to the list of **Files/Directories to Index**
+- Click **Build Index**
+
+### Querying
+
+Create the following files.  This is very similar to the earlier homework from CSE 484.  Feel free to change these parameters to suit your needs.
+
+#### retEval.params
+
+    <parameters>
+    <index>/path/to/cbir/doc-index.key</index>
+    <retModel>okapi</retModel>
+    <textQuery>query.txt</textQuery>
+    <resultFile>result.txt</resultFile>
+    <TRECResultFormat>1</TRECResultFormat>
+    <resultCount>20</resultCount>
+    </parameters>
+    
+#### query.txt
+
+    <DOC 1>
+    # Contents of the bag-of-words representation of your query image goes here
+    # For testing purposes, it can be useful to enter a single number.
+    # This will get you all of the images that have a given 'word', that is, have a feature that belongs to the specified cluster.
+    </DOC>
+
+Note that we're skipping the `parse_query.params` and `ParseToText` steps and directly creating a query. Now that you've got your files set up and ready to go, execute the query.
+
+    bin/RetEval retEval.params query.txt
+
+Open up the newly-created `result.txt` and view your results.
 

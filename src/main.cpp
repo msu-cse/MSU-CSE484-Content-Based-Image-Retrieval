@@ -12,6 +12,9 @@ namespace cbir {
 
 using namespace std;
 
+#define FIRST_ROW_OF_DATA \
+		{}
+
 int main(int ac, char* av[]) {
 
 	// -- Configure Logging
@@ -28,6 +31,16 @@ int main(int ac, char* av[]) {
 
 	if (OK != c.loadFeatures(FEATURE_FILE))
 		return EXIT_FAILURE;
+
+	if(SANITY_CHECK) {
+		float firstRow [CBIR::NUM_COLUMNS] = FIRST_ROW_OF_DATA;
+		for(int i = 0; i < CBIR::NUM_COLUMNS; i++) {
+			if( firstRow[i] != c.features.data[i] ) {
+				error("Row 1 at " << i << " does not match!");
+				return EXIT_FAILURE;
+			}
+		}
+	}
 
 	if (CONVERT_TO_HDF5)
 		if (OK != c.saveFeatures(FEATURE_FILE + ".hdf5"))
