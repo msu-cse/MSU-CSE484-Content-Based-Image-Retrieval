@@ -1,6 +1,6 @@
 # Compiler flags
 CC=g++
-CFLAGS= -I.
+CFLAGS= -I. -Iflann/src/cpp
 # Class name
 CLASS=cse484
 
