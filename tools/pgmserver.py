@@ -31,7 +31,13 @@ def client(server,port,data):
     s.send(dataLenBytes)
     s.send(data)
     print "waiting on response"
-    response = s.recv(999999)
+    
+    responseSizePacked = s.recv(packedSize)
+    responseSize = unpack(responseSizePacked)
+    response = ''
+    while len(response) < responseSize:
+        response += s.recv(responseSize - len(response))
+        print "Received %s bytes " % len(response)
     print "Got:" + response
     s.close()
     
@@ -80,5 +86,7 @@ if __name__ == '__main__':
         
         # -- Close the connection to complete the transaction
         print "sending response"
-        clientsocket.send(file("results.key").read())
+        fileData = file("results.key").read()
+        clientsocket.send(packSize(len(fileData)))
+        clientsocket.send(filedata)
         clientsocket.close()
