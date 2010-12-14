@@ -69,7 +69,7 @@ if __name__ == '__main__':
         f.close()
         
         # -- Call sift
-        os.system('sift < %s | python process-sift > results.key' % filename)
+        os.system('sift < %s | python process-sift.py > results.key' % filename)
         
         # -- Close the connection to complete the transaction
         print "sending response"
