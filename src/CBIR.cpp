@@ -429,6 +429,8 @@ int CBIR::startServer(fs::path clusterFile, int port) {
 
 		// -- Send the data back over the wire
 		info("Got words: " << ss.str());
+		int responseLen = htonl(ss.str().length());
+		asio::write(socket, asio::buffer((char*)&responseLen,sizeof(int)), asio::transfer_all(), error);
 		asio::write(socket, asio::buffer(ss.str()), asio::transfer_all(), error);
 
 		socket.close();
