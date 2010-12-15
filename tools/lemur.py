@@ -4,12 +4,13 @@ Run Lemur against the index, parse the output, and return a list of image result
 import os
 
 # -- Configuration --
+pathToCBIR='/Users/zach/cbir-msu-cse484'
 lemurConfig = {
     'bin': 'RetEval',
-    'params': '/Users/zach/cbir-msu-cse484/lemur-reteval-params',
-    'index': '/Users/zach/cbir-msu-cse484/index/docs.index.key',
-    'query': '/Users/zach/cbir-msu-cse484/lemur-query',
-    'results': '/Users/zach/cbir-msu-cse484/lemur-result',
+    'params': pathToCbir + '/lemur-reteval-params',
+    'index': pathToCbir + '/index/docs.index.key',
+    'query': pathToCbir + '/lemur-query',
+    'results': pathToCbir + '/lemur-result',
     'model': "okapi",
     'numResults': 10,
     'trec': 1
