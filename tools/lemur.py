@@ -1,7 +1,7 @@
 '''
 Run Lemur against the index, parse the output, and return a list of image results
 '''
-import os
+from os import system
 
 # -- Configuration --
 pathToCBIR='/Users/zach/cbir-msu-cse484'
@@ -32,7 +32,7 @@ def writeRetEvalParams():
     f.close()
 
 def executeRetEval():
-    os.system('%(bin)s %(params)s' % lemurConfig)
+    system('%(bin)s %(params)s' % lemurConfig)
 
 def parseResults():
     # Example data
@@ -64,8 +64,13 @@ def executeQuery(data):
     return parseResults()
 
 if __name__ == '__main__':
-    print executeQuery("""
+    results = executeQuery("""
     <DOC 1>
     1
     </DOC>
     """)
+    
+    print results
+    
+    for i in results:
+        system("open http://s3.amazonaws.com/cse484-images/%s" % i)
