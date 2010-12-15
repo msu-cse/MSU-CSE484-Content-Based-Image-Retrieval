@@ -7,10 +7,10 @@ import os
 pathToCBIR='/Users/zach/cbir-msu-cse484'
 lemurConfig = {
     'bin': 'RetEval',
-    'params': pathToCbir + '/lemur-reteval-params',
-    'index': pathToCbir + '/index/docs.index.key',
-    'query': pathToCbir + '/lemur-query',
-    'results': pathToCbir + '/lemur-result',
+    'params': pathToCBIR + '/lemur-reteval-params',
+    'index': pathToCBIR + '/index/docs.index.key',
+    'query': pathToCBIR + '/lemur-query',
+    'results': pathToCBIR + '/lemur-result',
     'model': "okapi",
     'numResults': 10,
     'trec': 1
