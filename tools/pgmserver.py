@@ -3,12 +3,9 @@ import sys
 import struct
 import tempfile
 import os
-# Caught exception: The index saved belongs to a different dataset
 
-SERVER_HOST='localhost'
-SERVER_PORT=8081
-CBIR_PATH = os.path.dirname(os.path.abspath(os.path.join('..', __file__)))
-SIFT_PATH = os.path.join(pathToCBIR, 'sift')
+import settings
+# Caught exception: The index saved belongs to a different dataset
 
 def packSize(size):
     return struct.pack('>L', size)
@@ -49,12 +46,10 @@ def client(server,port,data):
 if __name__ == '__main__':
 
     # Open the socket
-    serversocket = socket(AF_INET,SOCK_STREAM)
+    serversocket = socket(AF_INET, SOCK_STREAM)
     serversocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    serversocket.bind(('0.0.0.0',SERVER_PORT))
+    serversocket.bind(('0.0.0.0', settings.SERVER_PORT))
     serversocket.listen(100)
-
-
 
     # Accept incoming connections
     while 1:
@@ -85,7 +80,7 @@ if __name__ == '__main__':
 
         # -- Call sift
         os.system('%s < %s | python process-sift.py > results.key' % (
-            SIFT_PATH, filename))
+            settings.SIFT_PATH, filename))
 
         # -- Close the connection to complete the transaction
         print "sending response"

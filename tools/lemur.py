@@ -3,15 +3,16 @@ Run Lemur against the index, parse the output, and return a list of image result
 '''
 import os
 
+import settings
+
 
 # -- Configuration --
-CBIR_PATH = os.path.dirname(os.path.abspath(os.path.join('..', __file__)))
 lemurConfig = {
     'bin': 'RetEval',
-    'params': CBIR_PATH + '/lemur-reteval-params',
-    'index': CBIR_PATH + '/index/docs.index.key',
-    'query': CBIR_PATH + '/lemur-query',
-    'results': CBIR_PATH + '/lemur-result',
+    'params': settings.CBIR_PATH + '/lemur-reteval-params',
+    'index': settings.CBIR_PATH + '/index/docs.index.key',
+    'query': settings.CBIR_PATH + '/lemur-query',
+    'results': settings.CBIR_PATH + '/lemur-result',
     'model': "okapi",
     'numResults': 10,
     'trec': 1
@@ -74,4 +75,4 @@ if __name__ == '__main__':
     print results
 
     for i in results:
-        system("open http://s3.amazonaws.com/cse484-images/%s" % i)
+        os.system("open %s/%s" % (settings.IMAGE_PATH, i))
