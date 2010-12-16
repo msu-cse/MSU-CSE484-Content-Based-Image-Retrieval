@@ -44,12 +44,14 @@ def parseResults():
     # 1 Q0 0e056969903f02a076fbbcd8197260b0.jpg 4 -6.43574 Exp
 
     # Want just the third field
-    f = file(lemurConfig['results'],'r')
     results = []
-    for line in f.readlines():
-        results.append( line.split()[2] )
+    try:
+        f = file(lemurConfig['results'],'r')
+        for line in f.readlines():
+            results.append( line.split()[2] )
+    except IOError:
+        pass
     return results
-
 
 
 def writeQuery(data):
