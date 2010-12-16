@@ -13,3 +13,5 @@ mv cse484project/features/* features
 # Remove directories. Don't rm -rf in case there's something else there
 rmdir cse484project/features
 rmdir cse484project
+
+rm cse484project.tar.gz

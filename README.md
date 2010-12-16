@@ -48,7 +48,7 @@ To see a list of options,
 
 HDF5 is a binary format, which is much faster to load than the plaintext space-separated format.  If you will be loading a feature file frequently, it is recommended that you convert it to HDF5.
 
-    $ ./cbir --feature-file=esp.feature --convert-to-hdf5
+    $ ./cbir --feature=esp.feature --convert-to-hdf5
 
 ## Clustering and Bag-of-Words
 
