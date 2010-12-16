@@ -20,6 +20,7 @@ def browseCluster(which):
     print results
     
     for i in results:
+        print "http://s3.amazonaws.com/cse484-images/%s" % i
         system("open http://s3.amazonaws.com/cse484-images/%s" % i)
 
 

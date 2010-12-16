@@ -2,24 +2,10 @@
 Run Lemur against the index, parse the output, and return a list of image results
 '''
 import os
-
-import settings
-
-
-# -- Configuration --
-lemurConfig = {
-    'bin': 'RetEval',
-    'params': settings.CBIR_PATH + '/lemur-reteval-params',
-    'index': settings.CBIR_PATH + '/index/docs.index.key',
-    'query': settings.CBIR_PATH + '/lemur-query',
-    'results': settings.CBIR_PATH + '/lemur-result',
-    'model': "okapi",
-    'numResults': 10,
-    'trec': 1
-}
+from settings import LEMUR_CONFIG, IMAGE_PATH
 
 def writeRetEvalParams():
-    f = file(lemurConfig['params'],'w')
+    f = file(LEMUR_CONFIG['params'],'w')
     f.write("""
 <parameters>
     <index>%(index)s</index>
@@ -29,12 +15,12 @@ def writeRetEvalParams():
     <TRECResultFormat>%(trec)s</TRECResultFormat>
     <resultCount>%(numResults)s</resultCount>
 </parameters>
-""" % lemurConfig)
+""" % LEMUR_CONFIG)
     f.flush()
     f.close()
 
 def executeRetEval():
-    os.system('%(bin)s %(params)s' % lemurConfig)
+    os.system('%(bin)s %(params)s' % LEMUR_CONFIG)
 
 def parseResults():
     # Example data
@@ -46,7 +32,7 @@ def parseResults():
     # Want just the third field
     results = []
     try:
-        f = file(lemurConfig['results'],'r')
+        f = file(LEMUR_CONFIG['results'],'r')
         for line in f.readlines():
             results.append( line.split()[2] )
     except IOError:
@@ -55,7 +41,7 @@ def parseResults():
 
 
 def writeQuery(data):
-    f = file(lemurConfig['query'],'w')
+    f = file(LEMUR_CONFIG['query'],'w')
     f.write(data)
     f.flush()
     f.close()
@@ -77,4 +63,4 @@ if __name__ == '__main__':
     print results
 
     for i in results:
-        os.system("open %s/%s" % (settings.IMAGE_PATH, i))
+        os.system("open %s%s" % (IMAGE_PATH, i))
