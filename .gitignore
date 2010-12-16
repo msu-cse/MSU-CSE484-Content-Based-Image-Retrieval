@@ -19,3 +19,8 @@ docs
 
 # Mac
 *.DS_Store
+
+# Generated files
+*lemur-query
+*lemur-reteval-params
+*lemur-result

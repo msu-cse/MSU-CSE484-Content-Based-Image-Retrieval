@@ -14,6 +14,7 @@ import sys
 log = logging.getLogger('cbir.query')
 
 if __name__ == '__main__':
+    from datetime import datetime
     
     for filename in sys.argv[1:]:
         
@@ -25,6 +26,7 @@ if __name__ == '__main__':
         
         # -- Get PGM keypoints
         log.info( "Processing %s" % filename)
+        start = datetime.now()
         f = file(filename)
         keypoints = server.client(data=f.read(),
             server=settings.PGM_SERVER['hostname'],
@@ -49,9 +51,12 @@ if __name__ == '__main__':
         results = lemur.executeQuery(words)
         if not results:
             log.error("An error occured while querying LEMUR")
+        stop = datetime.now()
         
         # -- Display results
         for image in results:
             url = join(settings.IMAGE_PATH, image)
             print url
             system("%s %s" % (settings.BROWSER,url))
+        
+        log.info("Query '%s' runtime: %s" % (filename,stop-start))

@@ -396,15 +396,17 @@ int CBIR::startServer(fs::path clusterFile, int port) {
 		// ... but that's hard.
 
 		// -- Write out the file
-		fs::path tempFile( "server.tmp" );
+		fs::path tempFile( "cbir-server.tmp" );
 		info("Writing data to " << tempFile);
 		ofstream fout(tempFile.string().c_str(), ios::trunc);
 		fout.write(buffer, size);
 		fout.flush();
 		fout.close();
+		
 
 		// -- Read back *in* the file
 		loadFeatures(tempFile);
+		fs::remove(tempFile);
 
 		// -- Nearest neighbor
 		// TODO: THis is a copy-paste, refactor code
