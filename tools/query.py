@@ -5,7 +5,7 @@ from datetime import datetime
 import fileinput
 import logging
 from os import system
-from os.path import exists,join
+from os.path import exists, join
 
 import lemur
 import server
@@ -15,12 +15,12 @@ import sys
 log = logging.getLogger('cbir.query')
 
 
-def execute_query(filename, open_images=False):
+def execute_query(filename):
     filename = filename.strip()
 
     if not exists(filename):
         log.error("File %s does not exist" % filename)
-        return
+        return []
 
     # -- Get PGM keypoints
     log.info( "Processing %s" % filename)
@@ -33,7 +33,7 @@ def execute_query(filename, open_images=False):
 
     if not keypoints:
         log.error("An error occurred while processing the PGM")
-        return
+        return []
 
     # -- Get Clusters
     log.info("Getting words for %s" % filename)
@@ -42,7 +42,7 @@ def execute_query(filename, open_images=False):
         port=settings.CBIR_SERVER['port'])
     if not words:
         log.error("An error occurred while getting words")
-        return
+        return []
 
     # -- Perform query
     log.info("Performing LEMUR query")
@@ -50,15 +50,9 @@ def execute_query(filename, open_images=False):
     print 'WORDS: ', words
     if not results:
         log.error("An error occured while querying LEMUR")
+        return []
 
     stop = datetime.now()
-
-    # -- Display results
-    for image in results:
-        url = join(settings.IMAGE_PATH, image)
-        print url
-        if open_images:
-            system("%s %s" % (settings.BROWSER,url))
 
     log.info("Query '%s' runtime: %s" % (filename,stop-start))
 
@@ -67,4 +61,8 @@ def execute_query(filename, open_images=False):
 
 if __name__ == '__main__':
     for filename in sys.argv[1:]:
-        execute_query(filename, open_images=True)
+        results = execute_query(filename)
+        for image in results:
+            url = join(settings.IMAGE_PATH, image)
+            print url
+            system("%s %s" % (settings.BROWSER, url))
