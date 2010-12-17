@@ -15,7 +15,7 @@ import sys
 log = logging.getLogger('cbir.query')
 
 
-def execute_query(filename):
+def execute_query(filename, open_images=False):
     filename = filename.strip()
 
     if not exists(filename):
@@ -57,7 +57,8 @@ def execute_query(filename):
     for image in results:
         url = join(settings.IMAGE_PATH, image)
         print url
-        #system("%s %s" % (settings.BROWSER,url))
+        if open_images:
+            system("%s %s" % (settings.BROWSER,url))
 
     log.info("Query '%s' runtime: %s" % (filename,stop-start))
 
@@ -66,4 +67,4 @@ def execute_query(filename):
 
 if __name__ == '__main__':
     for filename in sys.argv[1:]:
-        execute_query(filename)
+        execute_query(filename, open_images=True)
