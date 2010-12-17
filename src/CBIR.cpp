@@ -344,10 +344,10 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 }
 
 
-#define check_error(error) \
+#define check_error(error,what) \
 	if (error == boost::asio::error::eof) { \
 		info("Connection closed"); \
-		continue; \
+		what; \
 	} \
 	else if (error) \
 		throw boost::system::system_error(error);
@@ -378,15 +378,18 @@ int CBIR::startServer(fs::path clusterFile, int port) {
 
 		// -- Read the first 4 bytes for size
 		read = socket.read_some(asio::buffer(buffer, 4), error);
-		check_error(error);
+		check_error(error,continue);
 		info("Read " << read << " bytes");
 
 		// -- Calculate the size, read the file
 		long size = ntohl(*(long*)buffer);
 		info("Waiting on " << size << " bytes")
-		read = socket.read_some(asio::buffer(buffer, size), error);
-		info("Read " << read << " bytes");
-		check_error(error);
+		read = 0;
+		while(read < size) {
+			read = socket.read_some(asio::buffer(&buffer[read], size-read), error);
+			info("Read " << read << " bytes");
+			check_error(error,break);
+		}
 		if(read != size) {
 			error("Did not get expected byte-count");
 			continue;
