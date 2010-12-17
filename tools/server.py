@@ -5,6 +5,7 @@ import tempfile
 import os
 
 import settings
+from settings import PGM_SERVER
 # Caught exception: The index saved belongs to a different dataset
 
 def packSize(size):
