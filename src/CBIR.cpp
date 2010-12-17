@@ -142,7 +142,7 @@ int CBIR::buildClusters(int numClusters, int numIterations) {
 	info("Performing cluster operation " << numClusters << " clusters, "
 			<< numIterations << " iterations");
 
-	FLANNParameters params;
+	FLANNParameters params = DEFAULT_FLANN_PARAMETERS;
 	{
 		params.algorithm = KMEANS;
 		params.checks = 2048;
@@ -189,7 +189,7 @@ int CBIR::buildClusterIndex() {
 	}
 
 	info("Indexing clusters (" << clusters.rows << " rows)");
-	FLANNParameters indexParams;
+	FLANNParameters indexParams = DEFAULT_FLANN_PARAMETERS;
 	float speedup = 0.0f;
 	{
 		indexParams.algorithm = KDTREE;
@@ -266,11 +266,12 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 	// -- Compute nearest neighbors
 	int *indices = new int[features.rows];
 	float *distances = new float[features.rows];
-	FLANNParameters flannParams;
+	FLANNParameters flannParams = DEFAULT_FLANN_PARAMETERS;
 	{
 		flannParams.log_level = LOG_NONE;
 		//		flannParams.log_destination=NULL;
 		flannParams.random_seed = CENTERS_RANDOM;
+		flannParams.algorithm = AUTOTUNED;
 	}
 	info("Computing nearest neighbors");
 	flann_find_nearest_neighbors_index(clusterIndex, features.data,
@@ -331,7 +332,7 @@ int CBIR::computeBagOfWords(fs::path featureFile, fs::path directory,
 		for (int docFeature = 0; docFeature < iter->second && totalFeatures
 				< features.rows; docFeature++, totalFeatures++) {
 			//			debug("Feature number " << totalFeatures << "(" << docFeature << "/" << iter->second << ") for " << iter->first);
-			doc << indices[totalFeatures] << " ";
+			doc << indices[totalFeatures] << endl;
 		}
 
 		doc << "</TEXT>" << endl << "</DOC>" << endl;
@@ -412,11 +413,12 @@ int CBIR::startServer(fs::path clusterFile, int port) {
 		// TODO: THis is a copy-paste, refactor code
 		int *indices = new int[features.rows];
 		float *distances = new float[features.rows];
-		FLANNParameters flannParams;
+		FLANNParameters flannParams = DEFAULT_FLANN_PARAMETERS;
 		{
 			flannParams.log_level = LOG_NONE;
 			//		flannParams.log_destination=NULL;
 			flannParams.random_seed = CENTERS_RANDOM;
+			flannParams.algorithm = AUTOTUNED;
 		}
 		info("Computing nearest neighbors");
 		flann_find_nearest_neighbors_index(clusterIndex, features.data,

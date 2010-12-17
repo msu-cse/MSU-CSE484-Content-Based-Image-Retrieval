@@ -1,7 +1,10 @@
 #!/bin/sh
 
 # Download
-wget http://www.cse.msu.edu/~tongwei/cse484project.tar.gz
+if test ! -s cse484project.tar.gz
+then
+	wget http://www.cse.msu.edu/~tongwei/cse484project.tar.gz
+fi
 
 # Extract
 tar xvzf cse484project.tar.gz cse484project/features/
