@@ -386,7 +386,7 @@ int CBIR::startServer(fs::path clusterFile, int port) {
 		info("Waiting on " << size << " bytes")
 		read = 0;
 		while(read < size) {
-			read = socket.read_some(asio::buffer(&buffer[read], size-read), error);
+			read += socket.read_some(asio::buffer(&buffer[read], size-read), error);
 			info("Read " << read << " bytes");
 			check_error(error,break);
 		}
