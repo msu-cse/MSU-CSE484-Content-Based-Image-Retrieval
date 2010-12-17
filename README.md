@@ -13,7 +13,7 @@
 Homebrew allows easy installation of packages from source onto Mac OS X.  Any package that can be installed with Homebrew can easily be installed with the usual `./configure && make && make install` or via a repository such as `apt-get` or `yum`.
 
     $ ruby -e "$(curl -fsSL https://gist.github.com/raw/323731/install_homebrew.rb)"
-    
+
 ### libhdf5
 
     $ sudo brew install hdf5

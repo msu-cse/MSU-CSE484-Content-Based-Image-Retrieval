@@ -16,6 +16,7 @@ Debug
 Release
 features
 docs
+index
 
 # Mac
 *.DS_Store

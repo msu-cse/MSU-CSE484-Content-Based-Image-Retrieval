@@ -24,9 +24,7 @@ data = """<DOC 1>
 
 if len(sys.argv) > 2:
     f = file(sys.argv[2],'w')
-    f.write(data)   
+    f.write(data)
     f.close()
 else:
     print data
-    
-    
