@@ -46,9 +46,10 @@ def client(server,port,data):
 if __name__ == '__main__':
 
     # Open the socket
+    bindInfo = (PGM_SERVER['bind'], PGM_SERVER['port'])
     serversocket = socket(AF_INET, SOCK_STREAM)
     serversocket.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    serversocket.bind(('0.0.0.0', settings.SERVER_PORT))
+    serversocket.bind(bindInfo)
     serversocket.listen(100)
 
     # Accept incoming connections
